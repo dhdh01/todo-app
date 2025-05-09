@@ -4,14 +4,20 @@ let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
 // 渲染任务列表
 function renderTasks() {
   const taskList = document.getElementById('task-list');
-  taskList.innerHTML = '';  // 清空任务列表
+  taskList.innerHTML = ''; // 清空任务列表
 
   tasks.forEach((task, index) => {
     const li = document.createElement('li');
+
     li.innerHTML = `
-      ${task.text}
+      <input type="checkbox" ${task.done ? 'checked' : ''} onchange="toggleDone(${index})">
+      <span style="text-decoration: ${task.done ? 'line-through' : 'none'};">
+        ${task.text}
+      </span>
       <button onclick="deleteTask(${index})">Delete</button>
+      <button onclick="editTask(${index})">Edit</button>
     `;
+
     taskList.appendChild(li);
   });
 }
@@ -22,7 +28,7 @@ function addTask() {
   const taskText = input.value.trim();
 
   if (taskText) {
-    tasks.push({ text: taskText });
+    tasks.push({ text: taskText, done: false });
     input.value = '';  // 清空输入框
     saveTasks();       // 保存任务
     renderTasks();     // 更新任务列表
@@ -34,6 +40,23 @@ function deleteTask(index) {
   tasks.splice(index, 1);  // 删除任务
   saveTasks();             // 保存任务
   renderTasks();           // 更新任务列表
+}
+
+// 切换任务完成状态
+function toggleDone(index) {
+  tasks[index].done = !tasks[index].done;
+  saveTasks();
+  renderTasks();
+}
+
+// 编辑任务
+function editTask(index) {
+  const newText = prompt('Edit task:', tasks[index].text);  // 弹出对话框让用户编辑
+  if (newText !== null && newText.trim() !== '') {
+    tasks[index].text = newText.trim();
+    saveTasks();       // 保存更新后的任务
+    renderTasks();     // 重新渲染任务列表
+  }
 }
 
 // 保存任务到 localStorage
