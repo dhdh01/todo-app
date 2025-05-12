@@ -27,13 +27,23 @@ function addTask() {
   const input = document.getElementById('task-input');
   const taskText = input.value.trim();
 
-  if (taskText) {
-    tasks.push({ text: taskText, done: false });
-    input.value = '';  // 清空输入框
-    saveTasks();       // 保存任务
-    renderTasks();     // 更新任务列表
+  if (!taskText) {
+    alert('任务不能为空！');
+    return;
   }
+
+  const isDuplicate = tasks.some(task => task.text === taskText);
+  if (isDuplicate) {
+    alert('任务已存在，请勿重复添加！');
+    return;
+  }
+
+  tasks.push({ text: taskText, done: false });
+  input.value = '';
+  saveTasks();
+  renderTasks();
 }
+
 
 // 删除任务
 function deleteTask(index) {
